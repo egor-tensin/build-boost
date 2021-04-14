@@ -1,0 +1,118 @@
+name: Build Boost
+description: Download & build Boost
+
+inputs:
+  version:
+    description: Version to build
+    required: true
+  libraries:
+    description: Space-separated list of libraries
+    required: true
+  toolset:
+    description: Toolset to use
+    required: false
+    default: auto
+  platform:
+    description: Target platform
+    required: false
+    default: auto
+  configuration:
+    description: Configuration to build
+    required: false
+    default: Release
+  directory:
+    description: Destination directory
+    required: false
+
+outputs:
+  root:
+    description: Root Boost directory
+    value: '${{ steps.build.outputs.root }}'
+  librarydir:
+    description: Directory with built Boost libraries
+    value: '${{ steps.build.outputs.librarydir }}'
+
+runs:
+  using: composite
+  steps:
+    - id: install
+      run: |
+        New-Variable os -Value '${{ runner.os }}' -Option Constant
+        New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
+
+        if (Get-Command python3 -ErrorAction SilentlyContinue) {
+            $python = @('python3')
+        } elseif (Get-Command py -ErrorAction SilentlyContinue) {
+            $python = @('py', '-3')
+        } elseif (Get-Command python -ErrorAction SilentlyContinue) {
+            $python = @('python')
+        } else {
+            echo @'
+        ::error ::
+        egor-tensin/build-boost depends on a PyPI package, which requires Python 3.6 or later.
+        We couldn't find a Python installation in this environment.
+        '@
+            exit 1
+        }
+
+        $exe, $args = $python
+        & $exe $args -m pip install --user --upgrade cmake-common~=1.0
+
+        if ($windows_host) {
+            $bin_dir = & $exe $args -c "import sysconfig; print(sysconfig.get_path('scripts', 'nt_user'))"
+        } else {
+            $bin_dir = & $exe $args -c "import sysconfig; print(sysconfig.get_path('scripts', 'posix_user'))"
+        }
+
+        echo "::set-output name=bin_dir::$bin_dir"
+      shell: pwsh
+
+    - id: build
+      run: |
+        New-Variable os -Value '${{ runner.os }}' -Option Constant
+        New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
+
+        New-Variable base_dir -Value '${{ runner.workspace }}' -Option Constant
+        New-Variable version -Value '${{ inputs.version }}' -Option Constant
+        New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
+        New-Variable platform -Value '${{ inputs.platform }}' -Option Constant
+        New-Variable configuration -Value '${{ inputs.configuration }}' -Option Constant
+
+        $boost_dir = '${{ inputs.directory }}'
+        if (-not $boost_dir) {
+            $boost_dir = Join-Path $base_dir boost
+        }
+
+        $libraries = '${{ inputs.libraries }}'
+        $libraries = $libraries.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+
+        if (-not $libraries) {
+            echo @'
+        ::warning ::
+        No Boost libraries were explicitly selected for building, going to try to build them all.
+        This is likely to fail.
+        '@
+        }
+
+        $libraries = $libraries | %{"--with-$_"}
+
+        $bin_dir = '${{ steps.install.outputs.bin_dir }}'
+        $path_sep = [IO.Path]::PathSeparator
+        $env:Path = "$bin_dir$path_sep$env:PATH"
+
+        boost-download --cache $base_dir -- $version $boost_dir
+        boost-build --toolset $toolset --platform $platform --configuration $configuration -- $boost_dir $libraries
+
+        $platformdir = $platform
+        if ($platformdir -eq 'auto' -and $windows_host) {
+            $platformdir = 'x64'
+        }
+        $librarydir = Join-Path $boost_dir 'stage' $platformdir $configuration 'lib'
+
+        echo "::set-output name=root::$boost_dir"
+        echo "::set-output name=librarydir::$librarydir"
+      shell: pwsh
+
+branding:
+  icon: star
+  color: green

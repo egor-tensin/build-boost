@@ -1,0 +1,89 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # Weekly, at 5:45 AM on Friday (somewhat randomly chosen).
+    - cron: '45 5 * * 5'
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        version: [1.58.0, 1.74.0]
+        os: [ubuntu-18.04, ubuntu-20.04, windows-2016, windows-2019]
+        toolset: [auto, clang, gcc, mingw, msvc]
+
+        exclude:
+          # No Visual Studio on Linux.
+          - {os: ubuntu-18.04, toolset: msvc}
+          - {os: ubuntu-20.04, toolset: msvc}
+          # GCC == MinGW-w64 on Windows.
+          - {os: windows-2016, toolset: gcc}
+          - {os: windows-2019, toolset: gcc}
+
+    runs-on: '${{ matrix.os }}'
+
+    name: '${{ matrix.version }} / ${{ matrix.os }} / ${{ matrix.toolset }}'
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Boost
+        uses: actions/cache@v2.1.4
+        with:
+          path: '${{ runner.workspace }}/boost_*.tar.gz'
+          key: 'boost-${{ matrix.version }}'
+
+      - name: Clean up PATH
+        uses: egor-tensin/cleanup-path@v2
+        if: runner.os == 'Windows'
+
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
+        if: matrix.toolset == 'gcc'
+
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
+        if: matrix.toolset == 'mingw' || (matrix.toolset == 'clang' && runner.os == 'Windows')
+
+      - name: Set up Clang
+        uses: egor-tensin/setup-clang@v1
+        if: matrix.toolset == 'clang'
+
+      - id: build
+        name: Build Boost
+        uses: ./
+        with:
+          version: '${{ matrix.version }}'
+          toolset: '${{ matrix.toolset }}'
+          configuration: Release
+          libraries: filesystem program_options system
+
+      - name: Check libraries
+        run: |
+          New-Variable os -Value '${{ runner.os }}' -Option Constant
+          New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
+
+          New-Variable toolset -Value '${{ matrix.toolset }}' -Option Constant
+          New-Variable librarydir -Value '${{ steps.build.outputs.librarydir }}' -Option Constant
+
+          $prefix = 'libboost_'
+          $ext = '.a'
+          if ($windows_host -and $toolset -in @('auto', 'clang', 'msvc')) {
+              $ext = '.lib'
+          }
+
+          $expected = @('filesystem', 'program_options', 'system')
+          $expected = $expected | %{"$prefix$_$ext"}
+          foreach ($lib in $expected) {
+              $path = Join-Path $librarydir $lib
+              $(Test-Path $path -Type Leaf) -or $(throw "Couldn't find Boost library at: $path")
+          }
