@@ -68,25 +68,11 @@ jobs:
           libraries: filesystem program_options system
 
       - name: Check libraries
-        run: |
-          New-Variable os -Value '${{ runner.os }}' -Option Constant
-          New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
-
-          New-Variable toolset -Value '${{ matrix.toolset }}' -Option Constant
-          New-Variable librarydir -Value '${{ steps.build.outputs.librarydir }}' -Option Constant
-
-          $prefix = 'libboost_'
-          $ext = '.a'
-          if ($windows_host -and $toolset -in @('auto', 'clang', 'msvc')) {
-              $ext = '.lib'
-          }
-
-          $expected = @('filesystem', 'program_options', 'system')
-          $expected = $expected | %{"$prefix$_$ext"}
-          foreach ($lib in $expected) {
-              $path = Join-Path $librarydir $lib
-              $(Test-Path $path -Type Leaf) -or $(throw "Couldn't find Boost library at: $path")
-          }
+        uses: ./.github/actions/check-libraries
+        with:
+          toolset: '${{ matrix.toolset }}'
+          librarydir: '${{ steps.build.outputs.librarydir }}'
+          libraries: filesystem program_options system
 
   different_configurations:
     strategy:
@@ -124,7 +110,12 @@ jobs:
         uses: ./
         with:
           version: 1.66.0
-          toolset: auto
           platform: '${{ matrix.platform }}'
           configuration: '${{ matrix.configuration }}'
+          libraries: filesystem program_options system
+
+      - name: Check libraries
+        uses: ./.github/actions/check-libraries
+        with:
+          librarydir: '${{ steps.build.outputs.librarydir }}'
           libraries: filesystem program_options system

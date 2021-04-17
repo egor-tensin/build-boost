@@ -1,0 +1,38 @@
+name: Check that Boost libraries were built
+description: Check that Boost libraries were built
+inputs:
+  librarydir:
+    description: Directory with the library files
+    required: true
+  libraries:
+    description: Libraries to check
+    required: true
+  toolset:
+    description: Toolset used
+    required: false
+    default: auto
+runs:
+  using: composite
+  steps:
+    - run: |
+        New-Variable os -Value '${{ runner.os }}' -Option Constant
+        New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
+
+        New-Variable librarydir -Value '${{ inputs.librarydir }}' -Option Constant
+        New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
+
+        $prefix = 'libboost_'
+        $ext = '.a'
+        if ($windows_host -and $toolset -in @('auto', 'clang', 'msvc')) {
+            $ext = '.lib'
+        }
+
+        $expected = '${{ inputs.libraries }}'
+        $expected = $expected.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+        $expected = $expected | %{"$prefix$_$ext"}
+
+        foreach ($lib in $expected) {
+            $path = Join-Path $librarydir $lib
+            $(Test-Path $path -Type Leaf) -or $(throw "Couldn't find Boost library at: $path")
+        }
+      shell: pwsh
