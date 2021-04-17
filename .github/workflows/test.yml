@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  old_and_new:
     strategy:
       matrix:
         version: [1.58.0, 1.74.0]
@@ -87,3 +87,44 @@ jobs:
               $path = Join-Path $librarydir $lib
               $(Test-Path $path -Type Leaf) -or $(throw "Couldn't find Boost library at: $path")
           }
+
+  different_configurations:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, windows-2016, windows-2019]
+        platform: [x64, x86]
+        configuration: [Debug, Release]
+
+    runs-on: '${{ matrix.os }}'
+
+    name: '${{ matrix.os }} / ${{ matrix.platform }} / ${{ matrix.configuration }}'
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Boost
+        uses: actions/cache@v2.1.4
+        with:
+          path: '${{ runner.workspace }}/boost_*.tar.gz'
+          key: 'boost-${{ matrix.version }}'
+
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          platform: '${{ matrix.platform }}'
+        if: runner.os == 'Linux'
+
+      - id: build
+        name: Build Boost
+        uses: ./
+        with:
+          version: 1.66.0
+          toolset: auto
+          platform: '${{ matrix.platform }}'
+          configuration: '${{ matrix.configuration }}'
+          libraries: filesystem program_options system
