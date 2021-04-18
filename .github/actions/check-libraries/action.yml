@@ -26,8 +26,6 @@ runs:
         New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
         New-Variable static -Value ('${{ inputs.static }}' -eq '1') -Option Constant
 
-        dir $librarydir
-
         if ($static) {
             $prefix = 'lib'
             $ext = '.a'
