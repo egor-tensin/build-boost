@@ -11,6 +11,7 @@ This GitHub action downloads & builds Boost libraries in your workflow run.
 Use it in your workflow like this:
 
     - name: Build Boost
+      id: boost
       uses: egor-tensin/build-boost@v1
       with:
         version: 1.71.0
@@ -18,8 +19,12 @@ Use it in your workflow like this:
         platform: x64
         configuration: Release
 
-* GCC is used by default on Linux; on Windows, it's MSVC.
-Specify the `toolset` parameter to use a different toolset.
+    - name: Show paths
+      run: |
+        printf 'Boost has been unpacked to: %s\n' '${{ steps.boost.outputs.root }}'
+        printf 'Libraries can be found here: %s\n' '${{ steps.boost.outputs.librarydir }}'
+      shell: bash
+
 * `x64` is the default value for the `platform` parameter and can be omitted.
 Use `x86` if you want to build 32-bit binaries.
 * `Release` is the default value for the `configuration` parameter and can be
@@ -27,8 +32,6 @@ omitted.
 Use `Debug` if you want to build debug binaries.
 * Set `static` to `1` if you want to build static libraries.
 * Set `static-runtime` to `1` if you want to link to the static runtime.
-
-[cmake-common]: https://github.com/egor-tensin/cmake-common
 
 API
 ---
@@ -76,6 +79,7 @@ delegates almost everything to it.
 * You can use my other actions [setup-gcc], [setup-mingw], [setup-clang] to set
 up different toolsets targetting both x86 and x64.
 
+[cmake-common]: https://github.com/egor-tensin/cmake-common
 [setup-gcc]: https://github.com/egor-tensin/setup-gcc
 [setup-mingw]: https://github.com/egor-tensin/setup-mingw
 [setup-clang]: https://github.com/egor-tensin/setup-clang
