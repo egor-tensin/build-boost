@@ -15,7 +15,7 @@ inputs:
   platform:
     description: Target platform
     required: false
-    default: auto
+    default: x64
   configuration:
     description: Configuration to build
     required: false
