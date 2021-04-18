@@ -18,8 +18,6 @@ Use it in your workflow like this:
         platform: x64
         configuration: Release
 
-* This action uses my other project [cmake-common] to actually download and
-build Boost.
 * GCC is used by default on Linux; on Windows, it's MSVC.
 Specify the `toolset` parameter to use a different toolset.
 * `x64` is the default value for the `platform` parameter and can be omitted.
@@ -60,9 +58,16 @@ API
 | root       | D:\a\project\boost                     | BOOST_ROOT       | Root Boost directory.
 | librarydir | D:\a\project\boost\stage\x64\Debug\lib | BOOST_LIBRARYDIR | Directory that contains the built libraries.
 
+Use the `librarydir` output to locate the built libraries.
+You can pass it to CMake using the `BOOST_LIBRARYDIR` parameter:
+
+    cmake -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}" ...
+
 Notes
 -----
 
+* This action uses my other project [cmake-common] to actually download and
+build Boost.
 * [cmake-common] sees *a lot* more testing than this action, while this action
 delegates almost everything to it.
 * You can use my other actions [setup-gcc], [setup-mingw], [setup-clang] to set
