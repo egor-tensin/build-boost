@@ -67,6 +67,13 @@ jobs:
           configuration: Release
           libraries: filesystem program_options system
 
+      - name: Check Boost
+        uses: ./.github/actions/check-boost
+        with:
+          # This tests that Boost is indeed in that directory, don't replace
+          # with ${{ steps.build.outputs.root }}.
+          root: '${{ runner.workspace }}/boost'
+
       - name: Check libraries
         uses: ./.github/actions/check-libraries
         with:
@@ -113,6 +120,14 @@ jobs:
           platform: '${{ matrix.platform }}'
           configuration: '${{ matrix.configuration }}'
           libraries: filesystem program_options system
+          directory: '${{ runner.workspace }}/foo'
+
+      - name: Check Boost
+        uses: ./.github/actions/check-boost
+        with:
+          # This tests that Boost is indeed in that directory, don't replace
+          # with ${{ steps.build.outputs.root }}.
+          root: '${{ runner.workspace }}/foo'
 
       - name: Check libraries
         uses: ./.github/actions/check-libraries

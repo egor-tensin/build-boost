@@ -1,0 +1,13 @@
+name: Check that Boost was downloaded
+description: Check that Boost was downloaded
+inputs:
+  root:
+    description: Root Boost directory
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: |
+        $config_path = Join-Path '${{ inputs.root }}' boost config.hpp
+        $(Test-Path $config_path -Type Leaf) -or $(throw "Couldn't find config.hpp at: $config_path")
+      shell: pwsh
