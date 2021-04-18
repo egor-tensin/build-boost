@@ -65,6 +65,7 @@ jobs:
           version: '${{ matrix.version }}'
           toolset: '${{ matrix.toolset }}'
           configuration: Release
+          static: 1
           libraries: filesystem program_options system
 
       - name: Check Boost
@@ -80,6 +81,7 @@ jobs:
           toolset: '${{ matrix.toolset }}'
           librarydir: '${{ steps.build.outputs.librarydir }}'
           libraries: filesystem program_options system
+          static: 1
 
   different_configurations:
     strategy:

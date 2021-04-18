@@ -11,6 +11,10 @@ inputs:
     description: Toolset used
     required: false
     default: auto
+  static:
+    description: Look for static libraries
+    required: false
+    default: 0
 runs:
   using: composite
   steps:
@@ -20,16 +24,30 @@ runs:
 
         New-Variable librarydir -Value '${{ inputs.librarydir }}' -Option Constant
         New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
+        New-Variable static -Value ('${{ inputs.static }}' -eq '1') -Option Constant
 
-        $prefix = 'libboost_'
-        $ext = '.a'
-        if ($windows_host -and $toolset -in @('auto', 'clang', 'msvc')) {
-            $ext = '.lib'
+        dir $librarydir
+
+        if ($static) {
+            $prefix = 'lib'
+            $ext = '.a'
+            if ($windows_host -and $toolset -in @('auto', 'clang', 'msvc')) {
+                $ext = '.lib'
+            }
+        } else {
+            $prefix = 'lib'
+            if ($windows_host -and $toolset -in @('auto', 'clang', 'msvc')) {
+                $prefix = ''
+            }
+            $ext = '.so'
+            if ($windows_host) {
+                $ext = '.dll'
+            }
         }
 
         $expected = '${{ inputs.libraries }}'
         $expected = $expected.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
-        $expected = $expected | %{"$prefix$_$ext"}
+        $expected = $expected | %{"${prefix}boost_$_$ext"}
 
         foreach ($lib in $expected) {
             $path = Join-Path $librarydir $lib

@@ -20,6 +20,14 @@ inputs:
     description: Configuration to build
     required: false
     default: Release
+  static:
+    description: Build static libraries
+    required: false
+    default: 0
+  static-runtime:
+    description: Link to the static runtime
+    required: false
+    default: 0
   directory:
     description: Destination directory
     required: false
@@ -77,6 +85,8 @@ runs:
         New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
         New-Variable platform -Value '${{ inputs.platform }}' -Option Constant
         New-Variable configuration -Value '${{ inputs.configuration }}' -Option Constant
+        New-Variable static -Value ('${{ inputs.static }}' -eq '1') -Option Constant
+        New-Variable static_runtime -Value ('${{ inputs.static-runtime }}' -eq '1') -Option Constant
 
         $boost_dir = '${{ inputs.directory }}'
         if (-not $boost_dir) {
@@ -100,8 +110,19 @@ runs:
         $path_sep = [IO.Path]::PathSeparator
         $env:Path = "$bin_dir$path_sep$env:PATH"
 
+        $link = if ($static) {'static'} else {'shared'}
+        $runtime_link = if ($static_runtime) {'static'} else {'shared'}
+
         boost-download --cache $base_dir -- $version $boost_dir
-        boost-build --toolset $toolset --platform $platform --configuration $configuration -- $boost_dir $libraries
+        boost-build `
+            --toolset $toolset `
+            --platform $platform `
+            --configuration $configuration `
+            --link $link `
+            --runtime-link $runtime_link `
+            -- `
+            $boost_dir `
+            $libraries
 
         $platformdir = $platform
         if ($platformdir -eq 'auto' -and $windows_host) {
