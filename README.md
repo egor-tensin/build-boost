@@ -61,7 +61,10 @@ API
 Use the `librarydir` output to locate the built libraries.
 You can pass it to CMake using the `BOOST_LIBRARYDIR` parameter:
 
-    cmake -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}" ...
+    > cmake \
+        -D "BOOST_ROOT=${{ steps.boost.outputs.root }}" \
+        -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}" \
+        ...
 
 Notes
 -----
