@@ -49,12 +49,12 @@ API
 |                | x86          |         | Build 32-bit binaries.
 | configuration  | Release      | ✓       | Build Release binaries.
 |                | Debug        |         | Build Debug binaries.
-| static         | *other*      | ✓       | Shared libraries.
+| static         | *any*        | ✓       | Shared libraries.
 |                | 1            |         | Static libraries.
-| static-runtime | *other*      | ✓       | Link to the shared runtime.
+| static-runtime | *any*        | ✓       | Link to the shared runtime.
 |                | 1            |         | Link to the static runtime.
 | directory      | *empty*      | ✓       | Build in `${{ runner.workspace }}/boost`.
-|                | *other*      |         | Build in a custom directory.
+|                | *any*        |         | Build in a custom directory.
 
 | Output     | Example                                | CMake name       | Description
 | ---------- | -------------------------------------- | ---------------- | -----------
