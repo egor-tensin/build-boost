@@ -1,6 +1,8 @@
 Build Boost
 ===========
 
+[![Test](https://github.com/egor-tensin/build-boost/actions/workflows/test.yml/badge.svg)](https://github.com/egor-tensin/build-boost/actions/workflows/test.yml)
+
 This GitHub action downloads & builds Boost libraries in your workflow run.
 
 * Downloads a distribution of the specified Boost version and unpacks it.
