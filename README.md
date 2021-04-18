@@ -56,7 +56,7 @@ API
 | directory      | *empty*      | ✓       | Build in `${{ runner.workspace }}/boost`.
 |                | *any*        |         | Build in a custom directory.
 
-| Output     | Example                                | CMake name       | Description
+| Output     | Example                                | CMake input      | Description
 | ---------- | -------------------------------------- | ---------------- | -----------
 | root       | D:\a\project\boost                     | BOOST_ROOT       | Root Boost directory.
 | librarydir | D:\a\project\boost\stage\x64\Debug\lib | BOOST_LIBRARYDIR | Directory that contains the built libraries.
@@ -64,10 +64,9 @@ API
 Use the `librarydir` output to locate the built libraries.
 You can pass it to CMake using the `BOOST_LIBRARYDIR` parameter:
 
-    > cmake \
-        -D "BOOST_ROOT=${{ steps.boost.outputs.root }}" \
-        -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}" \
-        ...
+    > cmake -D "BOOST_ROOT=${{ steps.boost.outputs.root }}" \
+            -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}" \
+            ...
 
 Notes
 -----
