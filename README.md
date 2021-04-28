@@ -68,6 +68,26 @@ You can pass it to CMake using the `BOOST_LIBRARYDIR` parameter:
             -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}" \
             ...
 
+Caching
+-------
+
+Cache the Boost distribution archive by using the `actions/cache` action.
+For example, for Boost version 1.72.0:
+
+    - name: Cache Boost
+      uses: actions/cache@v2
+      with:
+        path: '${{ runner.workspace }}/boost_*.tar.gz'
+        key: 'boost-1.72.0'
+
+    - name: Build Boost
+      # This won't re-download the archive unnecessarily:
+      uses: egor-tensin/build-boost@v1
+      with:
+        version: 1.72.0
+      ...
+
+
 Notes
 -----
 
