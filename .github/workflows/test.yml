@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Cache Boost
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2
         with:
           path: '${{ runner.workspace }}/boost_*.tar.gz'
           key: 'boost-${{ matrix.version }}'
@@ -103,7 +103,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Cache Boost
-        uses: actions/cache@v2.1.4
+        uses: actions/cache@v2
         with:
           path: '${{ runner.workspace }}/boost_*.tar.gz'
           key: 'boost-${{ matrix.version }}'
