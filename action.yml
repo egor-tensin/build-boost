@@ -73,6 +73,14 @@ runs:
         }
 
         echo "::set-output name=bin_dir::$bin_dir"
+      env:
+        PIP_NO_PYTHON_VERSION_WARNING: 1
+        PIP_DISABLE_PIP_VERSION_CHECK: 1
+        # This is hilarious: --no-warn-script-location is defined with
+        # action='store_false', which is why it's kind of inverted compared to
+        # the options above.
+        # https://github.com/pypa/pip/issues/5200
+        PIP_NO_WARN_SCRIPT_LOCATION: 0
       shell: pwsh
 
     - id: build
