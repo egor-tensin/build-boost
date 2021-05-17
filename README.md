@@ -41,7 +41,8 @@ API
 | version        | **required** |         | Boost version to build, e.g. `1.71.0`.
 | libraries      | **required** |         | Space-separated list of libraries to build, e.g. `filesystem program_options system`.
 | toolset        | auto         | ✓       | Use GCC on Linux and MSVC on Windows.
-|                | msvc         |         | Use MSVC.
+|                | msvc         |         | Use MSVC. Supports different versions \[1\].
+|                | vs           |         | Visual Studio; same as "msvc". Supports different versions \[2\].
 |                | gcc          |         | Use GCC.
 |                | mingw        |         | Use MinGW-w64.
 |                | clang        |         | Use Clang.
@@ -55,6 +56,10 @@ API
 |                | 1            |         | Link to the static runtime.
 | directory      | *empty*      | ✓       | Build in `${{ runner.workspace }}/boost`.
 |                | *any*        |         | Build in a custom directory.
+
+1. Toolset "msvc" can have an optional version suffix: msvc140, msvc141,
+msvc142.
+2. Toolset "vs" can have an optional version suffix: vs2015, vs2017, vs2019.
 
 | Output     | Example                                | CMake input      | Description
 | ---------- | -------------------------------------- | ---------------- | -----------
