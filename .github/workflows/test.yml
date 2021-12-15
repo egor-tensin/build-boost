@@ -136,3 +136,57 @@ jobs:
         with:
           librarydir: '${{ steps.build.outputs.librarydir }}'
           libraries: filesystem program_options system
+
+  macos:
+    strategy:
+      matrix:
+        # 1.71.0 is the earliest version to not fail with these errors:
+        #
+        #     clang: error: unknown argument: '-fcoalesce-templates'
+        #
+        version: [1.71.0, 1.74.0]
+        os: [macos-10.15, macos-11]
+        toolset: [auto]
+
+    runs-on: '${{ matrix.os }}'
+
+    name: '${{ matrix.version }} / ${{ matrix.os }} / ${{ matrix.toolset }}'
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Boost
+        uses: actions/cache@v2
+        with:
+          path: '${{ runner.workspace }}/boost_*.tar.gz'
+          key: 'boost-${{ matrix.version }}'
+
+      - id: build
+        name: Build Boost
+        uses: ./
+        with:
+          version: '${{ matrix.version }}'
+          toolset: '${{ matrix.toolset }}'
+          configuration: Release
+          static: 1
+          libraries: filesystem program_options system
+
+      - name: Check Boost
+        uses: ./.github/actions/check-boost
+        with:
+          # This tests that Boost is indeed in that directory, don't replace
+          # with ${{ steps.build.outputs.root }}.
+          root: '${{ runner.workspace }}/boost'
+
+      - name: Check libraries
+        uses: ./.github/actions/check-libraries
+        with:
+          toolset: '${{ matrix.toolset }}'
+          librarydir: '${{ steps.build.outputs.librarydir }}'
+          libraries: filesystem program_options system
+          static: 1
