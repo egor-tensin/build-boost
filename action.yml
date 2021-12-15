@@ -87,6 +87,7 @@ runs:
       run: |
         New-Variable os -Value '${{ runner.os }}' -Option Constant
         New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
+        New-Variable macos_host -Value ($os -eq 'macOS') -Option Constant
 
         New-Variable base_dir -Value '${{ runner.workspace }}' -Option Constant
         New-Variable version -Value '${{ inputs.version }}' -Option Constant
@@ -120,6 +121,13 @@ runs:
 
         $link = if ($static) {'static'} else {'shared'}
         $runtime_link = if ($static_runtime) {'static'} else {'shared'}
+
+        if ($macos_host) {
+            # This is pure insanity. For some reason, the Python's bin/
+            # directory is in Path, but not in PATH (found out using echo)!
+            # Every person responsible for this mess is insane.
+            $env:PATH = $env:Path
+        }
 
         boost-download --cache $base_dir -- $version $boost_dir
         boost-build `
