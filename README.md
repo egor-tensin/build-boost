@@ -58,8 +58,9 @@ API
 |                | *any*        |         | Build in a custom directory.
 
 1. Toolset "msvc" can have an optional version suffix: msvc140, msvc141,
-msvc142.
-2. Toolset "vs" can have an optional version suffix: vs2015, vs2017, vs2019.
+msvc142, msvc143.
+2. Toolset "vs" can have an optional version suffix: vs2015, vs2017, vs2019,
+vs2022.
 
 | Output     | Example                                | CMake input      | Description
 | ---------- | -------------------------------------- | ---------------- | -----------
