@@ -12,8 +12,8 @@ jobs:
   old_and_new:
     strategy:
       matrix:
-        version: [1.58.0, 1.74.0]
-        os: [ubuntu-18.04, ubuntu-20.04, windows-2016, windows-2019]
+        version: [1.58.0, 1.78.0]
+        os: [ubuntu-18.04, ubuntu-20.04, windows-2016, windows-2019, windows-2022]
         toolset: [auto, clang, gcc, mingw, msvc]
 
         exclude:
@@ -23,6 +23,9 @@ jobs:
           # GCC == MinGW-w64 on Windows.
           - {os: windows-2016, toolset: gcc}
           - {os: windows-2019, toolset: gcc}
+          - {os: windows-2022, toolset: gcc}
+          # VS 2022 doesn't support older Boost versions.
+          - {os: windows-2022, version: 1.58.0}
 
     runs-on: '${{ matrix.os }}'
 
@@ -86,7 +89,7 @@ jobs:
   different_configurations:
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2016, windows-2019]
+        os: [ubuntu-20.04, windows-2016, windows-2019, windows-2022]
         platform: [x64, x86]
         configuration: [Debug, Release]
 
@@ -118,7 +121,7 @@ jobs:
         name: Build Boost
         uses: ./
         with:
-          version: 1.66.0
+          version: 1.78.0
           platform: '${{ matrix.platform }}'
           configuration: '${{ matrix.configuration }}'
           libraries: filesystem program_options system
