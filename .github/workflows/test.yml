@@ -24,6 +24,9 @@ jobs:
           - {os: windows-2016, toolset: gcc}
           - {os: windows-2019, toolset: gcc}
           - {os: windows-2022, toolset: gcc}
+          # MinGW should be the same across different Windows versions.
+          - {os: windows-2016, toolset: mingw}
+          - {os: windows-2019, toolset: mingw}
           # VS 2022 doesn't support older Boost versions.
           - {os: windows-2022, version: 1.58.0}
 
