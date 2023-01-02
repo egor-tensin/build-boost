@@ -72,7 +72,7 @@ runs:
             $bin_dir = & $exe $args -c "import sysconfig; print(sysconfig.get_path('scripts', 'posix_user'))"
         }
 
-        echo "::set-output name=bin_dir::$bin_dir"
+        echo "bin_dir=$bin_dir" >> $env:GITHUB_OUTPUT
       env:
         PIP_NO_PYTHON_VERSION_WARNING: 1
         PIP_DISABLE_PIP_VERSION_CHECK: 1
@@ -146,8 +146,8 @@ runs:
         }
         $librarydir = Join-Path $boost_dir 'stage' $platformdir $configuration 'lib'
 
-        echo "::set-output name=root::$boost_dir"
-        echo "::set-output name=librarydir::$librarydir"
+        echo "root=$boost_dir"        >> $env:GITHUB_OUTPUT
+        echo "librarydir=$librarydir" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
 branding:
