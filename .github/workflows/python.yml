@@ -1,0 +1,57 @@
+name: Boost.Python
+
+on:
+  push:
+  pull_request:
+  schedule:
+    # Weekly, at 5:45 AM on Friday (somewhat randomly chosen).
+    - cron: '45 5 * * 5'
+  workflow_dispatch:
+
+jobs:
+  python:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - version: '1.78.0'
+
+    runs-on: '${{ matrix.os }}'
+
+    name: 'Boost.Python: ${{ matrix.version }} / ${{ matrix.os }}'
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Cache Boost
+        uses: actions/cache@v3
+        with:
+          path: '${{ runner.workspace }}/boost_*.tar.gz'
+          key: 'boost-${{ matrix.version }}'
+
+      - id: build
+        name: Build Boost
+        uses: ./
+        with:
+          version: '${{ matrix.version }}'
+          libraries: python
+
+      - name: Fix PATH
+        run: |
+          $bin_dir = & python -c "import sysconfig; print(sysconfig.get_path('scripts', 'nt_user'))"
+          echo $bin_dir >> $env:GITHUB_PATH
+        if: runner.os == 'Windows'
+
+      - name: Build an example module
+        run: |
+          cmake-build --platform x64 --boost '${{ steps.build.outputs.root }}' --configuration Release -- ./examples/python/
