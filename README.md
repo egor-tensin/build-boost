@@ -2,6 +2,7 @@ Build Boost
 ===========
 
 [![Test](https://github.com/egor-tensin/build-boost/actions/workflows/test.yml/badge.svg)](https://github.com/egor-tensin/build-boost/actions/workflows/test.yml)
+[![Boost.Python](https://github.com/egor-tensin/build-boost/actions/workflows/python.yml/badge.svg)](https://github.com/egor-tensin/build-boost/actions/workflows/python.yml)
 
 This GitHub action downloads & builds Boost libraries in your workflow run.
 
@@ -93,6 +94,13 @@ For example, for Boost version 1.72.0:
         version: 1.72.0
       ...
 
+Boost.Python
+------------
+
+See an [example CMakeLists.txt file] for how to link to Boost.Python libraries
+using CMake.
+
+[example CMakeLists.txt file]: examples/python/CMakeLists.txt
 
 Notes
 -----
