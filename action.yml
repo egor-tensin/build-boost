@@ -64,7 +64,7 @@ runs:
         }
 
         $exe, $args = $python
-        & $exe $args -m pip install --user --upgrade cmake-common~=3.0
+        & $exe $args -m pip install --user --upgrade cmake-common~=5.0
 
         if ($windows_host) {
             $bin_dir = & $exe $args -c "import sysconfig; print(sysconfig.get_path('scripts', 'nt_user'))"
