@@ -54,4 +54,4 @@ jobs:
 
       - name: Build an example module
         run: |
-          cmake-build --platform x64 --boost '${{ steps.build.outputs.root }}' --configuration Release -- ./examples/python/
+          project-build --platform x64 --boost '${{ steps.build.outputs.root }}' --configuration Release -- ./examples/python/ build/
