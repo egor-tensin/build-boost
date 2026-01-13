@@ -14,7 +14,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         include:
-          - version: '1.78.0'
+          - version: '1.87.0'
 
     runs-on: '${{ matrix.os }}'
 
