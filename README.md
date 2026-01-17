@@ -15,7 +15,7 @@ Use it in your workflow like this:
       id: boost
       uses: egor-tensin/build-boost@v1
       with:
-        version: 1.71.0
+        version: 1.80.0
         libraries: filesystem program_options system
         platform: x64
         configuration: Release
@@ -39,7 +39,7 @@ API
 
 | Input          | Value        | Default | Description
 | -------------- | ------------ | ------- | -----------
-| version        | **required** |         | Boost version to build, e.g. `1.71.0`.
+| version        | **required** |         | Boost version to build, e.g. `1.80.0`.
 | libraries      | **required** |         | Space-separated list of libraries to build, e.g. `filesystem program_options system`.
 | toolset        | auto         | ✓       | Use GCC on Linux and MSVC on Windows.
 |                | msvc         |         | Use MSVC. Supports different versions \[1\].
@@ -79,19 +79,19 @@ Caching
 -------
 
 Cache the Boost distribution archive by using the `actions/cache` action.
-For example, for Boost version 1.72.0:
+For example, for Boost version 1.80.0:
 
     - name: Cache Boost
       uses: actions/cache@v2
       with:
         path: '${{ runner.workspace }}/boost_*.tar.gz'
-        key: 'boost-1.72.0'
+        key: 'boost-1.80.0'
 
     - name: Build Boost
       # This won't re-download the archive unnecessarily:
       uses: egor-tensin/build-boost@v1
       with:
-        version: 1.72.0
+        version: 1.80.0
       ...
 
 Boost.Python

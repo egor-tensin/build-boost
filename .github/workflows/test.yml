@@ -12,7 +12,7 @@ jobs:
   old_and_new:
     strategy:
       matrix:
-        version: [1.80.0, 1.88.0]
+        version: [1.80.0, 1.87.0]
         os: [ubuntu-22.04, ubuntu-24.04, windows-2025]
         toolset: [auto, clang, gcc, mingw, msvc]
 
@@ -144,7 +144,7 @@ jobs:
         #
         #     clang: error: unknown argument: '-fcoalesce-templates'
         #
-        version: [1.72.0, 1.80.0]
+        version: [1.73.0, 1.80.0, 1.87.0]
         os: [macos-14, macos-15, macos-26]
         toolset: [auto]
 
