@@ -2,7 +2,6 @@ name: Boost.Python
 
 on:
   push:
-  pull_request:
   schedule:
     # Weekly, at 5:45 AM on Friday (somewhat randomly chosen).
     - cron: '45 5 * * 5'
