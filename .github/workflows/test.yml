@@ -78,7 +78,7 @@ jobs:
         uses: ./.github/actions/check-libraries
         with:
           toolset: '${{ matrix.toolset }}'
-          librarydir: '${{ steps.build.outputs.librarydir }}'
+          install_dir: '${{ steps.build.outputs.install_dir }}'
           libraries: filesystem program_options system
           static: 1
 
@@ -133,7 +133,7 @@ jobs:
       - name: Check libraries
         uses: ./.github/actions/check-libraries
         with:
-          librarydir: '${{ steps.build.outputs.librarydir }}'
+          install_dir: '${{ steps.build.outputs.install_dir }}'
           libraries: filesystem program_options system
 
   macos:
@@ -191,6 +191,6 @@ jobs:
         uses: ./.github/actions/check-libraries
         with:
           toolset: '${{ matrix.toolset }}'
-          librarydir: '${{ steps.build.outputs.librarydir }}'
+          install_dir: '${{ steps.build.outputs.install_dir }}'
           libraries: filesystem program_options system
           static: 1

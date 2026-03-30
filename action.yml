@@ -36,9 +36,9 @@ outputs:
   root:
     description: Root Boost directory
     value: '${{ steps.build.outputs.root }}'
-  librarydir:
-    description: Directory with built Boost libraries
-    value: '${{ steps.build.outputs.librarydir }}'
+  install_dir:
+    description: Directory with Boost installation
+    value: '${{ steps.build.outputs.install_dir }}'
 
 runs:
   using: composite
@@ -64,7 +64,7 @@ runs:
         }
 
         $exe, $args = $python
-        & $exe $args -m pip install --user --upgrade cmake-common~=5.1
+        & $exe $args -m pip install --user --upgrade cmake-common~=6.0
 
         if ($windows_host) {
             $bin_dir = & $exe $args -c "import sysconfig; print(sysconfig.get_path('scripts', 'nt_user'))"
@@ -113,8 +113,6 @@ runs:
         '@
         }
 
-        $libraries = $libraries | %{"--with-$_"}
-
         $bin_dir = '${{ steps.install.outputs.bin_dir }}'
         $path_sep = [IO.Path]::PathSeparator
         $env:Path = "$bin_dir$path_sep$env:PATH"
@@ -144,10 +142,10 @@ runs:
         if ($platformdir -eq 'auto' -and $windows_host) {
             $platformdir = 'x64'
         }
-        $librarydir = Join-Path $boost_dir 'stage' $platformdir $configuration 'lib'
+        $install_dir = Join-Path $boost_dir 'install_dir' $platformdir $configuration
 
-        echo "root=$boost_dir"        >> $env:GITHUB_OUTPUT
-        echo "librarydir=$librarydir" >> $env:GITHUB_OUTPUT
+        echo "root=$boost_dir"          >> $env:GITHUB_OUTPUT
+        echo "install_dir=$install_dir" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
 branding:

@@ -23,7 +23,7 @@ Use it in your workflow like this:
     - name: Show paths
       run: |
         printf 'Boost has been unpacked to: %s\n' '${{ steps.boost.outputs.root }}'
-        printf 'Libraries can be found here: %s\n' '${{ steps.boost.outputs.librarydir }}'
+        printf 'It has been installed here: %s\n' '${{ steps.boost.outputs.install_dir }}'
       shell: bash
 
 * `x64` is the default value for the `platform` parameter and can be omitted.
@@ -63,17 +63,15 @@ msvc142, msvc143.
 2. Toolset "vs" can have an optional version suffix: vs2015, vs2017, vs2019,
 vs2022.
 
-| Output     | Example                                | CMake input      | Description
-| ---------- | -------------------------------------- | ---------------- | -----------
-| root       | D:\a\project\boost                     | BOOST_ROOT       | Root Boost directory.
-| librarydir | D:\a\project\boost\stage\x64\Debug\lib | BOOST_LIBRARYDIR | Directory that contains the built libraries.
+| Output      | Example                                      | CMake input      | Description
+| ----------- | -------------------------------------------- | ---------------- | -----------
+| root        | D:\a\project\boost                           | -                | Unpacked Boost directory.
+| install_dir | D:\a\project\boost\install_dir\x64\Debug\lib | BOOST_ROOT       | Contains the headers and the built libraries.
 
-Use the `librarydir` output to locate the built libraries.
-You can pass it to CMake using the `BOOST_LIBRARYDIR` parameter:
+Use the `install_dir` output to locate the built libraries.
+You can pass it to CMake using the `BOOST_ROOT` parameter:
 
-    > cmake -D "BOOST_ROOT=${{ steps.boost.outputs.root }}" \
-            -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}" \
-            ...
+    > cmake -D "BOOST_ROOT=${{ steps.boost.outputs.install_dir }}" ...
 
 Caching
 -------

@@ -1,8 +1,8 @@
 name: Check that Boost libraries were built
 description: Check that Boost libraries were built
 inputs:
-  librarydir:
-    description: Directory with the library files
+  install_dir:
+    description: Boost installation directory
     required: true
   libraries:
     description: Libraries to check
@@ -22,7 +22,7 @@ runs:
         New-Variable os -Value '${{ runner.os }}' -Option Constant
         New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
 
-        New-Variable librarydir -Value '${{ inputs.librarydir }}' -Option Constant
+        New-Variable install_dir -Value '${{ inputs.install_dir }}' -Option Constant
         New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
         New-Variable static -Value ('${{ inputs.static }}' -eq '1') -Option Constant
 
@@ -48,7 +48,7 @@ runs:
         $expected = $expected | %{"${prefix}boost_$_$ext"}
 
         foreach ($lib in $expected) {
-            $path = Join-Path $librarydir $lib
+            $path = Join-Path $install_dir 'lib' $lib
             $(Test-Path $path -Type Leaf) -or $(throw "Couldn't find Boost library at: $path")
         }
       shell: pwsh

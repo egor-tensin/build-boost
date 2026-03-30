@@ -44,6 +44,7 @@ jobs:
         with:
           version: '${{ matrix.version }}'
           libraries: python
+          static-runtime: 1
 
       - name: Fix PATH
         run: |
@@ -53,4 +54,10 @@ jobs:
 
       - name: Build an example module
         run: |
-          project-build --platform x64 --boost '${{ steps.build.outputs.root }}' --configuration Release -- ./examples/python/ build/
+          project-build `
+              --platform x64 `
+              --boost '${{ steps.build.outputs.root }}' `
+              --configuration Release `
+              --link shared `
+              -- `
+              ./examples/python/ build/
