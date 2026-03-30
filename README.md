@@ -13,7 +13,7 @@ Use it in your workflow like this:
 
     - name: Build Boost
       id: boost
-      uses: egor-tensin/build-boost@v1
+      uses: egor-tensin/build-boost@v2
       with:
         version: 1.80.0
         libraries: filesystem program_options system
