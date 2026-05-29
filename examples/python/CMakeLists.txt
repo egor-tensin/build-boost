@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5) # for Boost::* imported targets
+cmake_minimum_required(VERSION 3.15)
 
 project(example_python)
 
