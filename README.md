@@ -95,10 +95,10 @@ For example, for Boost version 1.80.0:
 Boost.Python
 ------------
 
-See an [example CMakeLists.txt file] for how to link to Boost.Python libraries
+See a [test CMakeLists.txt file] for how to link to Boost.Python libraries
 using CMake.
 
-[example CMakeLists.txt file]: examples/python/CMakeLists.txt
+[test CMakeLists.txt file]: test/python/CMakeLists.txt
 
 Notes
 -----

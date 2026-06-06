@@ -60,4 +60,4 @@ jobs:
               --configuration Release `
               --link shared `
               -- `
-              ./examples/python/ build/
+              ./test/python/ build/
