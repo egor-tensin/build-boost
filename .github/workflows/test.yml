@@ -11,8 +11,8 @@ jobs:
   old_and_new:
     strategy:
       matrix:
-        version: [1.80.0, 1.87.0]
-        os: [ubuntu-22.04, ubuntu-24.04, windows-2025]
+        version: [1.82.0, 1.91.0]
+        os: [ubuntu-22.04, ubuntu-24.04, windows-2022, windows-2025]
         toolset: [auto, clang, gcc, mingw, msvc]
 
         exclude:
@@ -20,8 +20,12 @@ jobs:
           - {os: ubuntu-22.04, toolset: msvc}
           - {os: ubuntu-24.04, toolset: msvc}
           # GCC == MinGW-w64 on Windows.
+          - {os: windows-2022, toolset: gcc}
           - {os: windows-2025, toolset: gcc}
           # MinGW should be the same across different Windows versions.
+          - {os: windows-2022, toolset: mingw}
+          # Boost supports VS 2026 starting with version 1.91, I think?
+          - {os: windows-2025, version: 1.82.0}
 
     runs-on: '${{ matrix.os }}'
 
@@ -65,7 +69,7 @@ jobs:
           toolset: '${{ matrix.toolset }}'
           configuration: Release
           static: 1
-          libraries: filesystem program_options system
+          libraries: filesystem program_options
 
       - name: Check Boost
         uses: ./.github/actions/check-boost
@@ -79,13 +83,13 @@ jobs:
         with:
           toolset: '${{ matrix.toolset }}'
           install_dir: '${{ steps.build.outputs.install_dir }}'
-          libraries: filesystem program_options system
+          libraries: filesystem program_options
           static: 1
 
   different_configurations:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-2025]
+        os: [ubuntu-latest, windows-2022, windows-2025]
         platform: [x64, x86]
         configuration: [Debug, Release]
 
@@ -117,10 +121,10 @@ jobs:
         name: Build Boost
         uses: ./
         with:
-          version: 1.78.0
+          version: 1.91.0
           platform: '${{ matrix.platform }}'
           configuration: '${{ matrix.configuration }}'
-          libraries: filesystem program_options system
+          libraries: filesystem program_options
           directory: '${{ runner.workspace }}/foo'
 
       - name: Check Boost
@@ -134,7 +138,7 @@ jobs:
         uses: ./.github/actions/check-libraries
         with:
           install_dir: '${{ steps.build.outputs.install_dir }}'
-          libraries: filesystem program_options system
+          libraries: filesystem program_options
 
   macos:
     strategy:
@@ -143,7 +147,7 @@ jobs:
         #
         #     clang: error: unknown argument: '-fcoalesce-templates'
         #
-        version: [1.73.0, 1.80.0, 1.87.0]
+        version: [1.72.0, 1.82.0, 1.91.0]
         os: [macos-14, macos-15, macos-26]
         toolset: [auto]
 
@@ -178,7 +182,7 @@ jobs:
           toolset: '${{ matrix.toolset }}'
           configuration: Release
           static: 1
-          libraries: filesystem program_options system
+          libraries: filesystem program_options
 
       - name: Check Boost
         uses: ./.github/actions/check-boost
@@ -192,5 +196,5 @@ jobs:
         with:
           toolset: '${{ matrix.toolset }}'
           install_dir: '${{ steps.build.outputs.install_dir }}'
-          libraries: filesystem program_options system
+          libraries: filesystem program_options
           static: 1
