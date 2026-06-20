@@ -31,10 +31,6 @@ jobs:
 
     name: '${{ matrix.version }} / ${{ matrix.os }} / ${{ matrix.toolset }}'
 
-    defaults:
-      run:
-        shell: pwsh
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -97,10 +93,6 @@ jobs:
 
     name: '${{ matrix.os }} / ${{ matrix.platform }} / ${{ matrix.configuration }}'
 
-    defaults:
-      run:
-        shell: pwsh
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -154,10 +146,6 @@ jobs:
     runs-on: '${{ matrix.os }}'
 
     name: '${{ matrix.version }} / ${{ matrix.os }} / ${{ matrix.toolset }}'
-
-    defaults:
-      run:
-        shell: pwsh
 
     steps:
       - name: Checkout
