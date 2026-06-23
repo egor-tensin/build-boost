@@ -33,12 +33,12 @@ inputs:
     required: false
 
 outputs:
-  root:
-    description: Root Boost directory
-    value: '${{ steps.build.outputs.root }}'
   install_dir:
     description: Directory with Boost installation
     value: '${{ steps.build.outputs.install_dir }}'
+  root:
+    description: Source Boost directory
+    value: '${{ steps.build.outputs.root }}'
 
 runs:
   using: composite

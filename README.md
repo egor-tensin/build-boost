@@ -22,8 +22,8 @@ Use it in your workflow like this:
 
     - name: Show paths
       run: |
-        printf 'Boost has been unpacked to: %s\n' '${{ steps.boost.outputs.root }}'
-        printf 'It has been installed here: %s\n' '${{ steps.boost.outputs.install_dir }}'
+        printf 'Boost was installed here: %s\n' '${{ steps.boost.outputs.install_dir }}'
+        printf 'Boost was unpacked to: %s\n' '${{ steps.boost.outputs.root }}'
       shell: bash
 
 * `x64` is the default value for the `platform` parameter and can be omitted.
@@ -65,8 +65,8 @@ vs2022.
 
 | Output      | Example                                  | CMake input      | Description
 | ----------- | ---------------------------------------- | ---------------- | -----------
-| root        | D:\a\project\boost                       | -                | Unpacked Boost directory.
 | install_dir | D:\a\project\boost\install_dir\x64\Debug | BOOST_ROOT       | Contains the headers and the built libraries.
+| root        | D:\a\project\boost                       | -                | (*Deprecated*) Unpacked Boost directory.
 
 Use the `install_dir` output to locate the built libraries.
 You can pass it to CMake using the `BOOST_ROOT` parameter:
