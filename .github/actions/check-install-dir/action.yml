@@ -26,6 +26,18 @@ runs:
         New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
         New-Variable static -Value ('${{ inputs.static }}' -eq '1') -Option Constant
 
+        $include_dir = Join-Path $install_dir 'include'
+        $lib_dir = Join-Path $install_dir 'lib'
+
+        echo '========================= install_dir/ ========================='
+        ls $install_dir
+        echo '============================= lib/ ============================='
+        ls $lib_dir
+        echo '================================================================'
+
+        $path = Join-Path $include_dir 'boost' config.hpp
+        $(Test-Path $path -Type Leaf) -or $(throw "Couldn't find config.hpp at: $path")
+
         if ($static) {
             $prefix = 'lib'
             $ext = '.a'
@@ -48,7 +60,7 @@ runs:
         $expected = $expected | %{"${prefix}boost_$_$ext"}
 
         foreach ($lib in $expected) {
-            $path = Join-Path $install_dir 'lib' $lib
+            $path = Join-Path $lib_dir $lib
             $(Test-Path $path -Type Leaf) -or $(throw "Couldn't find Boost library at: $path")
         }
       shell: pwsh
