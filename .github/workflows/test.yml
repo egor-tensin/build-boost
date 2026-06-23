@@ -67,14 +67,14 @@ jobs:
           static: 1
           libraries: filesystem program_options
 
-      - name: Check Boost
+      - name: Check download
         uses: ./.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
           root: '${{ runner.workspace }}/boost'
 
-      - name: Check libraries
+      - name: Check installation
         uses: ./.github/actions/check-install-dir
         with:
           toolset: '${{ matrix.toolset }}'
@@ -119,14 +119,14 @@ jobs:
           libraries: filesystem program_options
           directory: '${{ runner.workspace }}/foo'
 
-      - name: Check Boost
+      - name: Check download
         uses: ./.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
           root: '${{ runner.workspace }}/foo'
 
-      - name: Check libraries
+      - name: Check installation
         uses: ./.github/actions/check-install-dir
         with:
           install_dir: '${{ steps.build.outputs.install_dir }}'
@@ -172,14 +172,14 @@ jobs:
           static: 1
           libraries: filesystem program_options
 
-      - name: Check Boost
+      - name: Check download
         uses: ./.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
           root: '${{ runner.workspace }}/boost'
 
-      - name: Check libraries
+      - name: Check installation
         uses: ./.github/actions/check-install-dir
         with:
           toolset: '${{ matrix.toolset }}'
