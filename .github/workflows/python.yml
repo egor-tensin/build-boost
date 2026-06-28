@@ -33,7 +33,7 @@ jobs:
           python-version: '3.x'
 
       - name: Cache Boost
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: '${{ runner.workspace }}/boost_*.tar.gz'
           key: 'boost-${{ matrix.version }}'
