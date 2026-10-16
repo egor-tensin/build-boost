@@ -13,7 +13,7 @@ Use it in your workflow like this:
 
     - name: Build Boost
       id: boost
-      uses: egor-tensin/build-boost@v2
+      uses: egor-tensin/build-boost@v3
       with:
         version: 1.80.0
         libraries: filesystem program_options system
@@ -80,14 +80,14 @@ Cache the Boost distribution archive by using the `actions/cache` action.
 For example, for Boost version 1.80.0:
 
     - name: Cache Boost
-      uses: actions/cache@v2
+      uses: actions/cache@v6
       with:
         path: '${{ runner.workspace }}/boost_*.tar.gz'
         key: 'boost-1.80.0'
 
     - name: Build Boost
       # This won't re-download the archive unnecessarily:
-      uses: egor-tensin/build-boost@v1
+      uses: egor-tensin/build-boost@v3
       with:
         version: 1.80.0
       ...
