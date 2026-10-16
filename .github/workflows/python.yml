@@ -27,11 +27,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: '3.x'
-
       - name: Cache Boost
         uses: actions/cache@v6
         with:
@@ -46,18 +41,12 @@ jobs:
           libraries: python
           static-runtime: 1
 
-      - name: Fix PATH
-        run: |
-          $bin_dir = & python -c "import sysconfig; print(sysconfig.get_path('scripts', 'nt_user'))"
-          echo $bin_dir >> $env:GITHUB_PATH
-        if: runner.os == 'Windows'
-
       - name: Build an example module
         run: |
-          project-build `
-              --platform x64 `
-              --boost '${{ steps.build.outputs.root }}' `
-              --configuration Release `
-              --link shared `
-              -- `
-              ./test/python/ build/
+          mkdir build | Out-Null
+          cmake `
+              -D 'Boost_ROOT=${{ steps.build.outputs.install_dir }}' `
+              -D CMAKE_BUILD_TYPE=Release `
+              -B build `
+              -S ./test/python
+          cmake --build build --config Release

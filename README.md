@@ -18,7 +18,7 @@ Use it in your workflow like this:
         version: 1.80.0
         libraries: filesystem program_options system
         platform: x64
-        configuration: Release
+        configuration: release
 
     - name: Show paths
       run: |
@@ -28,9 +28,9 @@ Use it in your workflow like this:
 
 * `x64` is the default value for the `platform` parameter and can be omitted.
 Use `x86` if you want to build 32-bit binaries.
-* `Release` is the default value for the `configuration` parameter and can be
+* `release` is the default value for the `configuration` parameter and can be
 omitted.
-Use `Debug` if you want to build debug binaries.
+Use `debug` if you want to build debug binaries.
 * Set `static` to `1` if you want to build static libraries.
 * Set `static-runtime` to `1` if you want to link to the static runtime.
 
@@ -49,8 +49,8 @@ API
 |                | clang        |         | Use Clang.
 | platform       | x64          | ✓       | Build 64-bit binaries.
 |                | x86          |         | Build 32-bit binaries.
-| configuration  | Release      | ✓       | Build Release binaries.
-|                | Debug        |         | Build Debug binaries.
+| configuration  | release      | ✓       | Build release binaries.
+|                | debug        |         | Build debug binaries.
 | static         | *any*        | ✓       | Shared libraries.
 |                | 1            |         | Static libraries.
 | static-runtime | *any*        | ✓       | Link to the shared runtime.
@@ -65,7 +65,7 @@ vs2022.
 
 | Output      | Example                                  | CMake input      | Description
 | ----------- | ---------------------------------------- | ---------------- | -----------
-| install_dir | D:\a\project\boost\install_dir\x64\Debug | BOOST_ROOT       | Contains the headers and the built libraries.
+| install_dir | D:\a\project\boost\install_dir\x64\debug | BOOST_ROOT       | Contains the headers and the built libraries.
 | root        | D:\a\project\boost                       | -                | (*Deprecated*) Unpacked Boost directory.
 
 Use the `install_dir` output to locate the built libraries.
