@@ -34,6 +34,7 @@ jobs:
         os:
           - ubuntu-22.04
           - ubuntu-24.04
+          - ubuntu-26.04
           - windows-2022
           - windows-2025
         toolset:
@@ -46,6 +47,7 @@ jobs:
           # No Visual Studio on Linux.
           - {os: ubuntu-22.04, toolset: msvc}
           - {os: ubuntu-24.04, toolset: msvc}
+          - {os: ubuntu-26.04, toolset: msvc}
           # GCC == MinGW-w64 on Windows.
           - {os: windows-2022, toolset: gcc}
           - {os: windows-2025, toolset: gcc}
