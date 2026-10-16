@@ -35,10 +35,10 @@ inputs:
 outputs:
   install_dir:
     description: Directory with Boost installation
-    value: '${{ steps.build.outputs.install_dir }}'
+    value: ${{ steps.build.outputs.install_dir }}
   root:
     description: Source Boost directory
-    value: '${{ steps.build.outputs.root }}'
+    value: ${{ steps.build.outputs.root }}
 
 runs:
   using: composite
@@ -48,32 +48,26 @@ runs:
         repository: egor-tensin/cmake-common
         ref: v8.0.2
         path: cmake
+        persist-credentials: false
 
     - uses: actions/setup-python@v7
       with:
         python-version: '>=3.11'
 
     - id: build
+      env:
+        WORKSPACE: ${{ github.workspace }}
+        ARG_VERSION: ${{ inputs.version }}
+        ARG_LIBRARIES: ${{ inputs.libraries }}
+        ARG_TOOLSET: ${{ inputs.toolset }}
+        ARG_PLATFORM: ${{ inputs.platform }}
+        ARG_CONFIGURATION: ${{ inputs.configuration }}
+        ARG_STATIC: ${{ inputs.static }}
+        ARG_STATIC_RUNTIME: ${{ inputs.static-runtime }}
+        ARG_DIRECTORY: ${{ inputs.directory }}
       run: |
-        New-Variable os -Value '${{ runner.os }}' -Option Constant
-        New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
-        New-Variable macos_host -Value ($os -eq 'macOS') -Option Constant
-
-        New-Variable base_dir -Value '${{ runner.workspace }}' -Option Constant
-        New-Variable version -Value '${{ inputs.version }}' -Option Constant
-        New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
-        New-Variable platform -Value '${{ inputs.platform }}' -Option Constant
-        New-Variable configuration -Value '${{ inputs.configuration }}'.ToLower() -Option Constant
-        New-Variable static -Value ('${{ inputs.static }}' -eq '1') -Option Constant
-        New-Variable static_runtime -Value ('${{ inputs.static-runtime }}' -eq '1') -Option Constant
-
-        $boost_dir = '${{ inputs.directory }}'
-        if (-not $boost_dir) {
-            $boost_dir = Join-Path $base_dir boost
-        }
-
-        $libraries = '${{ inputs.libraries }}'
-        $libraries = $libraries.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+        $version = $env:ARG_VERSION
+        $libraries = $env:ARG_LIBRARIES.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
 
         if (-not $libraries) {
             echo @'
@@ -83,12 +77,24 @@ runs:
         '@
         }
 
+        $toolset = $env:ARG_TOOLSET
+        $platform = $env:ARG_PLATFORM
+        $configuration = $env:ARG_CONFIGURATION.ToLower()
+        $static = $env:ARG_STATIC -eq '1'
+        $static_runtime = $env:ARG_STATIC_RUNTIME -eq '1'
+
+        $cache_dir = Join-Path $env:WORKSPACE ..
+        $boost_dir = $env:ARG_DIRECTORY
+        if (-not $boost_dir) {
+            $boost_dir = Join-Path $cache_dir boost
+        }
+
         $link = if ($static) {'static'} else {'shared'}
         $runtime_link = if ($static_runtime) {'static'} else {'shared'}
 
-        $env:PYTHONPATH = Join-Path '${{ github.workspace }}' 'cmake'
+        $env:PYTHONPATH = Join-Path $env:WORKSPACE cmake
 
-        python -m project.boost.download --cache $base_dir -- $version $boost_dir
+        python -m project.boost.download --cache $cache_dir -- $version $boost_dir
         python -m project.boost.build `
             --toolset $toolset `
             --platform $platform `
@@ -100,7 +106,7 @@ runs:
             $libraries
 
         $platformdir = $platform
-        if ($platformdir -eq 'auto' -and $windows_host) {
+        if ($platformdir -eq 'auto' -and '${{ runner.os }}' -eq 'Windows') {
             $platformdir = 'x64'
         }
         $install_dir = Join-Path $boost_dir 'install_dir' $platformdir $configuration

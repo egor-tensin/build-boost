@@ -9,6 +9,8 @@ on:
     - cron: '30 00 * * 5'
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   test_versions:
     strategy:
@@ -29,19 +31,22 @@ jobs:
           # Boost supports VS 2026 starting with version 1.91, I think?
           - {os: windows-2025, version: 1.82.0}
 
-    runs-on: '${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
 
-    name: '${{ matrix.version }}: ${{ matrix.os }} / ${{ matrix.toolset }}'
+    name: |
+      ${{ matrix.version }}: ${{ matrix.os }} / ${{ matrix.toolset }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Cache Boost
         uses: actions/cache@v6
         with:
-          path: '${{ runner.workspace }}/boost_*.tar.gz'
-          key: 'boost-${{ matrix.version }}'
+          path: ${{ runner.workspace }}/boost_*.tar.gz
+          key: boost-${{ matrix.version }}
 
       - name: Clean up PATH
         uses: egor-tensin/cleanup-path@v5
@@ -61,26 +66,26 @@ jobs:
 
       - id: build
         name: Build Boost
-        uses: ./
+        uses: $/
         with:
-          version: '${{ matrix.version }}'
-          toolset: '${{ matrix.toolset }}'
+          version: ${{ matrix.version }}
+          toolset: ${{ matrix.toolset }}
           configuration: release
           static: 1
           libraries: filesystem program_options
 
       - name: Check download
-        uses: ./.github/actions/check-download-dir
+        uses: $/.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
-          root: '${{ runner.workspace }}/boost'
+          root: ${{ runner.workspace }}/boost
 
       - name: Check installation
-        uses: ./.github/actions/check-install-dir
+        uses: $/.github/actions/check-install-dir
         with:
-          toolset: '${{ matrix.toolset }}'
-          install_dir: '${{ steps.build.outputs.install_dir }}'
+          toolset: ${{ matrix.toolset }}
+          install_dir: ${{ steps.build.outputs.install_dir }}
           libraries: filesystem program_options
           static: 1
 
@@ -91,47 +96,50 @@ jobs:
         platform: [x64, x86]
         configuration: [debug, release]
 
-    runs-on: '${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
 
-    name: '${{ matrix.configuration }}: ${{ matrix.os }} / ${{ matrix.platform }}'
+    name: |
+      ${{ matrix.configuration }}: ${{ matrix.os }} / ${{ matrix.platform }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Cache Boost
         uses: actions/cache@v6
         with:
-          path: '${{ runner.workspace }}/boost_*.tar.gz'
-          key: 'boost-${{ matrix.version }}'
+          path: ${{ runner.workspace }}/boost_*.tar.gz
+          key: boost-${{ matrix.version }}
 
       - name: Set up GCC
         uses: egor-tensin/setup-gcc@v2
         with:
-          platform: '${{ matrix.platform }}'
+          platform: ${{ matrix.platform }}
         if: runner.os == 'Linux'
 
       - id: build
         name: Build Boost
-        uses: ./
+        uses: $/
         with:
           version: 1.91.0
-          platform: '${{ matrix.platform }}'
-          configuration: '${{ matrix.configuration }}'
+          platform: ${{ matrix.platform }}
+          configuration: ${{ matrix.configuration }}
           libraries: filesystem program_options
-          directory: '${{ runner.workspace }}/foo'
+          directory: ${{ runner.workspace }}/foo
 
       - name: Check download
-        uses: ./.github/actions/check-download-dir
+        uses: $/.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
-          root: '${{ runner.workspace }}/foo'
+          root: ${{ runner.workspace }}/foo
 
       - name: Check installation
-        uses: ./.github/actions/check-install-dir
+        uses: $/.github/actions/check-install-dir
         with:
-          install_dir: '${{ steps.build.outputs.install_dir }}'
+          install_dir: ${{ steps.build.outputs.install_dir }}
           libraries: filesystem program_options
 
   test_macos:
@@ -144,40 +152,43 @@ jobs:
         version: [1.72.0, 1.82.0, 1.91.0]
         os: [macos-14, macos-15, macos-26]
         toolset: [auto]
-    runs-on: '${{ matrix.os }}'
-    name: '${{ matrix.os }}: ${{ matrix.version }}'
+    runs-on: ${{ matrix.os }}
+    name: |
+      ${{ matrix.os }}: ${{ matrix.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Cache Boost
         uses: actions/cache@v6
         with:
-          path: '${{ runner.workspace }}/boost_*.tar.gz'
-          key: 'boost-${{ matrix.version }}'
+          path: ${{ runner.workspace }}/boost_*.tar.gz
+          key: boost-${{ matrix.version }}
 
       - id: build
         name: Build Boost
-        uses: ./
+        uses: $/
         with:
-          version: '${{ matrix.version }}'
-          toolset: '${{ matrix.toolset }}'
+          version: ${{ matrix.version }}
+          toolset: ${{ matrix.toolset }}
           configuration: release
           static: 1
           libraries: filesystem program_options
 
       - name: Check download
-        uses: ./.github/actions/check-download-dir
+        uses: $/.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
-          root: '${{ runner.workspace }}/boost'
+          root: ${{ runner.workspace }}/boost
 
       - name: Check installation
-        uses: ./.github/actions/check-install-dir
+        uses: $/.github/actions/check-install-dir
         with:
-          toolset: '${{ matrix.toolset }}'
-          install_dir: '${{ steps.build.outputs.install_dir }}'
+          toolset: ${{ matrix.toolset }}
+          install_dir: ${{ steps.build.outputs.install_dir }}
           libraries: filesystem program_options
           static: 1
 
@@ -188,9 +199,10 @@ jobs:
         include:
           - version: '1.91.0'
 
-    runs-on: '${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
 
-    name: 'Boost.Python: ${{ matrix.os }}'
+    name: |
+      Boost.Python: ${{ matrix.os }}
 
     defaults:
       run:
@@ -199,26 +211,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Cache Boost
         uses: actions/cache@v6
         with:
-          path: '${{ runner.workspace }}/boost_*.tar.gz'
-          key: 'boost-${{ matrix.version }}'
+          path: ${{ runner.workspace }}/boost_*.tar.gz
+          key: boost-${{ matrix.version }}
 
       - id: build
         name: Build Boost
-        uses: ./
+        uses: $/
         with:
-          version: '${{ matrix.version }}'
+          version: ${{ matrix.version }}
           libraries: python
           static-runtime: 1
 
       - name: Build an example module
+        env:
+          INSTALL_DIR: ${{ steps.build.outputs.install_dir }}
         run: |
           mkdir build | Out-Null
           cmake `
-              -D 'Boost_ROOT=${{ steps.build.outputs.install_dir }}' `
+              -D "Boost_ROOT=$env:INSTALL_DIR" `
               -D CMAKE_BUILD_TYPE=Release `
               -B build `
               -S ./test/python
@@ -238,5 +254,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Release
         uses: softprops/action-gh-release@v3

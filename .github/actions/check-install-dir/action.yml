@@ -18,13 +18,17 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: |
-        New-Variable os -Value '${{ runner.os }}' -Option Constant
-        New-Variable windows_host -Value ($os -eq 'Windows') -Option Constant
+    - env:
+        ARG_INSTALL_DIR: ${{ inputs.install_dir }}
+        ARG_LIBRARIES: ${{ inputs.libraries }}
+        ARG_TOOLSET: ${{ inputs.toolset }}
+        ARG_STATIC: ${{ inputs.static }}
+      run: |
+        $windows_host = '${{ runner.os }}' -eq 'Windows'
 
-        New-Variable install_dir -Value '${{ inputs.install_dir }}' -Option Constant
-        New-Variable toolset -Value '${{ inputs.toolset }}' -Option Constant
-        New-Variable static -Value ('${{ inputs.static }}' -eq '1') -Option Constant
+        $install_dir = $env:ARG_INSTALL_DIR
+        $toolset = $env:ARG_TOOLSET
+        $static = $env:ARG_STATIC -eq '1'
 
         $include_dir = Join-Path $install_dir 'include'
         $lib_dir = Join-Path $install_dir 'lib'
@@ -55,8 +59,7 @@ runs:
             }
         }
 
-        $expected = '${{ inputs.libraries }}'
-        $expected = $expected.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+        $expected = $env:ARG_LIBRARIES.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
         $expected = $expected | %{"${prefix}boost_$_$ext"}
 
         foreach ($lib in $expected) {
