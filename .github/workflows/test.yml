@@ -15,10 +15,20 @@ jobs:
   test_versions:
     strategy:
       matrix:
-        version: [1.82.0, 1.91.0]
-        os: [ubuntu-22.04, ubuntu-24.04, windows-2022, windows-2025]
-        toolset: [auto, clang, gcc, mingw, msvc]
-
+        version:
+          - 1.82.0
+          - 1.91.0
+        os:
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - windows-2022
+          - windows-2025
+        toolset:
+          - auto
+          - clang
+          - gcc
+          - mingw
+          - msvc
         exclude:
           # No Visual Studio on Linux.
           - {os: ubuntu-22.04, toolset: msvc}
@@ -30,40 +40,31 @@ jobs:
           - {os: windows-2022, toolset: mingw}
           # Boost supports VS 2026 starting with version 1.91, I think?
           - {os: windows-2025, version: 1.82.0}
-
     runs-on: ${{ matrix.os }}
-
     name: |
       ${{ matrix.version }}: ${{ matrix.os }} / ${{ matrix.toolset }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-
       - name: Cache Boost
         uses: actions/cache@v6
         with:
           path: ${{ runner.workspace }}/boost_*.tar.gz
           key: boost-${{ matrix.version }}
-
       - name: Clean up PATH
         uses: egor-tensin/cleanup-path@v5
         if: runner.os == 'Windows'
-
       - name: Set up GCC
         uses: egor-tensin/setup-gcc@v2
         if: matrix.toolset == 'gcc'
-
       - name: Set up MinGW
         uses: egor-tensin/setup-mingw@v3
         if: matrix.toolset == 'mingw' || (matrix.toolset == 'clang' && runner.os == 'Windows')
-
       - name: Set up Clang
         uses: egor-tensin/setup-clang@v2
         if: matrix.toolset == 'clang'
-
       - id: build
         name: Build Boost
         uses: $/
@@ -73,14 +74,12 @@ jobs:
           configuration: release
           static: 1
           libraries: filesystem program_options
-
       - name: Check download
         uses: $/.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
           root: ${{ runner.workspace }}/boost
-
       - name: Check installation
         uses: $/.github/actions/check-install-dir
         with:
@@ -92,50 +91,51 @@ jobs:
   test_configurations:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-2022, windows-2025]
-        platform: [x64, x86]
-        configuration: [debug, release]
-
+        os:
+          - ubuntu-latest
+          - windows-2022
+          - windows-2025
+        platform:
+          - x64
+          - x86
+        configuration:
+          - debug
+          - release
+        include:
+          - version: 1.91.0
     runs-on: ${{ matrix.os }}
-
     name: |
       ${{ matrix.configuration }}: ${{ matrix.os }} / ${{ matrix.platform }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-
       - name: Cache Boost
         uses: actions/cache@v6
         with:
           path: ${{ runner.workspace }}/boost_*.tar.gz
           key: boost-${{ matrix.version }}
-
       - name: Set up GCC
         uses: egor-tensin/setup-gcc@v2
         with:
           platform: ${{ matrix.platform }}
         if: runner.os == 'Linux'
-
       - id: build
         name: Build Boost
         uses: $/
         with:
-          version: 1.91.0
+          version: ${{ matrix.version }}
           platform: ${{ matrix.platform }}
           configuration: ${{ matrix.configuration }}
           libraries: filesystem program_options
           directory: ${{ runner.workspace }}/foo
-
       - name: Check download
         uses: $/.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
           root: ${{ runner.workspace }}/foo
-
       - name: Check installation
         uses: $/.github/actions/check-install-dir
         with:
@@ -146,12 +146,17 @@ jobs:
     strategy:
       matrix:
         # 1.71.0 is the earliest version to not fail with these errors:
-        #
         #     clang: error: unknown argument: '-fcoalesce-templates'
-        #
-        version: [1.72.0, 1.82.0, 1.91.0]
-        os: [macos-14, macos-15, macos-26]
-        toolset: [auto]
+        version:
+          - 1.72.0
+          - 1.82.0
+          - 1.91.0
+        os:
+          - macos-14
+          - macos-15
+          - macos-26
+        include:
+          - toolset: auto
     runs-on: ${{ matrix.os }}
     name: |
       ${{ matrix.os }}: ${{ matrix.version }}
@@ -160,13 +165,11 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-
       - name: Cache Boost
         uses: actions/cache@v6
         with:
           path: ${{ runner.workspace }}/boost_*.tar.gz
           key: boost-${{ matrix.version }}
-
       - id: build
         name: Build Boost
         uses: $/
@@ -176,14 +179,12 @@ jobs:
           configuration: release
           static: 1
           libraries: filesystem program_options
-
       - name: Check download
         uses: $/.github/actions/check-download-dir
         with:
           # This tests that Boost is indeed in that directory, don't replace
           # with ${{ steps.build.outputs.root }}.
           root: ${{ runner.workspace }}/boost
-
       - name: Check installation
         uses: $/.github/actions/check-install-dir
         with:
@@ -195,31 +196,27 @@ jobs:
   test_python:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os:
+          - ubuntu-latest
+          - windows-latest
         include:
-          - version: '1.91.0'
-
+          - version: 1.91.0
     runs-on: ${{ matrix.os }}
-
     name: |
       Boost.Python: ${{ matrix.os }}
-
     defaults:
       run:
         shell: pwsh
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-
       - name: Cache Boost
         uses: actions/cache@v6
         with:
           path: ${{ runner.workspace }}/boost_*.tar.gz
           key: boost-${{ matrix.version }}
-
       - id: build
         name: Build Boost
         uses: $/
@@ -227,7 +224,6 @@ jobs:
           version: ${{ matrix.version }}
           libraries: python
           static-runtime: 1
-
       - name: Build an example module
         env:
           INSTALL_DIR: ${{ steps.build.outputs.install_dir }}
