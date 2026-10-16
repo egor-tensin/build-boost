@@ -39,24 +39,24 @@ API
 
 | Input          | Value        | Default | Description
 | -------------- | ------------ | ------- | -----------
-| version        | **required** |         | Boost version to build, e.g. `1.80.0`.
-| libraries      | **required** |         | Space-separated list of libraries to build, e.g. `filesystem program_options system`.
-| toolset        | auto         | ✓       | Use GCC on Linux and MSVC on Windows.
-|                | msvc         |         | Use MSVC. Supports different versions \[1\].
-|                | vs           |         | Visual Studio; same as "msvc". Supports different versions \[2\].
-|                | gcc          |         | Use GCC.
-|                | mingw        |         | Use MinGW-w64.
-|                | clang        |         | Use Clang.
-| platform       | x64          | ✓       | Build 64-bit binaries.
-|                | x86          |         | Build 32-bit binaries.
-| configuration  | release      | ✓       | Build release binaries.
-|                | debug        |         | Build debug binaries.
-| static         | *any*        | ✓       | Shared libraries.
-|                | 1            |         | Static libraries.
-| static-runtime | *any*        | ✓       | Link to the shared runtime.
-|                | 1            |         | Link to the static runtime.
-| directory      | *empty*      | ✓       | Build in `${{ runner.workspace }}/boost`.
-|                | *any*        |         | Build in a custom directory.
+| version        | **required** |         | Boost version to build, e.g. `1.80.0`
+| libraries      | **required** |         | Space-separated list of libraries to build, e.g. `filesystem program_options system`
+| toolset        | auto         | ✓       | Use GCC on Linux and MSVC on Windows
+|                | msvc         |         | Use MSVC. Supports different versions \[1\]
+|                | vs           |         | Visual Studio; same as "msvc". Supports different versions \[2\]
+|                | gcc          |         | Use GCC
+|                | mingw        |         | Use MinGW-w64
+|                | clang        |         | Use Clang
+| platform       | x64          | ✓       | Build 64-bit binaries
+|                | x86          |         | Build 32-bit binaries
+| configuration  | release      | ✓       | Build release binaries
+|                | debug        |         | Build debug binaries
+| static         | *any*        | ✓       | Shared libraries
+|                | 1            |         | Static libraries
+| static-runtime | *any*        | ✓       | Link to the shared runtime
+|                | 1            |         | Link to the static runtime
+| directory      | *empty*      | ✓       | Build in `${{ runner.workspace }}/boost`
+|                | *any*        |         | Build in a custom directory
 
 1. Toolset "msvc" can have an optional version suffix: msvc140, msvc141,
 msvc142, msvc143.
@@ -65,13 +65,13 @@ vs2022.
 
 | Output      | Example                                  | CMake input      | Description
 | ----------- | ---------------------------------------- | ---------------- | -----------
-| install_dir | D:\a\project\boost\install_dir\x64\debug | BOOST_ROOT       | Contains the headers and the built libraries.
-| root        | D:\a\project\boost                       | -                | (*Deprecated*) Unpacked Boost directory.
+| install_dir | D:\a\project\boost\install_dir\x64\debug | Boost_ROOT       | Contains the headers and the built libraries
+| root        | D:\a\project\boost                       | -                | (*Deprecated*) Unpacked Boost directory
 
 Use the `install_dir` output to locate the built libraries.
-You can pass it to CMake using the `BOOST_ROOT` parameter:
+You can pass it to CMake using the `Boost_ROOT` parameter:
 
-    > cmake -D "BOOST_ROOT=${{ steps.boost.outputs.install_dir }}" ...
+    > cmake -D "Boost_ROOT=${{ steps.boost.outputs.install_dir }}" ...
 
 Caching
 -------
