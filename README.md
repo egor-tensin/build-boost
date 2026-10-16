@@ -2,7 +2,6 @@ Build Boost
 ===========
 
 [![Test](https://github.com/egor-tensin/build-boost/actions/workflows/test.yml/badge.svg)](https://github.com/egor-tensin/build-boost/actions/workflows/test.yml)
-[![Boost.Python](https://github.com/egor-tensin/build-boost/actions/workflows/python.yml/badge.svg)](https://github.com/egor-tensin/build-boost/actions/workflows/python.yml)
 
 This GitHub action downloads & builds Boost libraries in your workflow run.
 
