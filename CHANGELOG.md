@@ -1,3 +1,14 @@
+v3
+--
+
+* This action now uses actions/checkout & actions/setup-python internally to
+  set up dependencies. This might break something, but on the other hand, it
+  might not.
+* No breaking API changes.
+      * However, the `install_dir` output value might be different compared to
+        v2 due to upgrading the internal scripts. If you used the outputs
+        properly, it should make no difference.
+
 v2
 --
 
