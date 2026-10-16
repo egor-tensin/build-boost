@@ -221,3 +221,20 @@ jobs:
               -B build `
               -S ./test/python
           cmake --build build --config Release
+
+  release:
+    if: github.ref_type == 'tag'
+    name: Release
+    runs-on: ubuntu-latest
+    needs:
+      - old_and_new
+      - different_configurations
+      - macos
+      - python
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Release
+        uses: softprops/action-gh-release@v3
