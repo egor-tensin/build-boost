@@ -56,7 +56,6 @@ runs:
 
     - id: build
       env:
-        WORKSPACE: ${{ github.workspace }}
         ARG_VERSION: ${{ inputs.version }}
         ARG_LIBRARIES: ${{ inputs.libraries }}
         ARG_TOOLSET: ${{ inputs.toolset }}
@@ -66,7 +65,7 @@ runs:
         ARG_STATIC_RUNTIME: ${{ inputs.static-runtime }}
         ARG_DIRECTORY: ${{ inputs.directory }}
       run: |
-        $workspace = (Get-ChildItem env:WORKSPACE).Value
+        $workspace = (Get-ChildItem env:GITHUB_WORKSPACE).Value
         $version   = (Get-ChildItem env:ARG_VERSION).Value
         $libraries = (Get-ChildItem env:ARG_LIBRARIES).Value
 
