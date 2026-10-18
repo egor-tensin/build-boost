@@ -66,8 +66,20 @@ runs:
         ARG_STATIC_RUNTIME: ${{ inputs.static-runtime }}
         ARG_DIRECTORY: ${{ inputs.directory }}
       run: |
-        $version = $env:ARG_VERSION
-        $libraries = $env:ARG_LIBRARIES.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+        $workspace = (Get-ChildItem env:WORKSPACE).Value
+        $version   = (Get-ChildItem env:ARG_VERSION).Value
+        $libraries = (Get-ChildItem env:ARG_LIBRARIES).Value
+
+        $toolset       = (Get-ChildItem env:ARG_TOOLSET).Value
+        $platform      = (Get-ChildItem env:ARG_PLATFORM).Value
+        $configuration = (Get-ChildItem env:ARG_CONFIGURATION).Value
+
+        $static         = (Get-ChildItem env:ARG_STATIC).Value -eq '1'
+        $static_runtime = (Get-ChildItem env:ARG_STATIC_RUNTIME).Value -eq '1'
+
+        $directory = (Get-ChildItem env:ARG_DIRECTORY).Value
+
+        $libraries = $libraries.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
 
         if (-not $libraries) {
             echo @'
@@ -77,14 +89,10 @@ runs:
         '@
         }
 
-        $toolset = $env:ARG_TOOLSET
-        $platform = $env:ARG_PLATFORM
-        $configuration = $env:ARG_CONFIGURATION.ToLower()
-        $static = $env:ARG_STATIC -eq '1'
-        $static_runtime = $env:ARG_STATIC_RUNTIME -eq '1'
+        $configuration = $configuration.ToLower()
 
-        $cache_dir = Join-Path $env:WORKSPACE ..
-        $boost_dir = $env:ARG_DIRECTORY
+        $cache_dir = Join-Path $workspace ..
+        $boost_dir = $directory
         if (-not $boost_dir) {
             $boost_dir = Join-Path $cache_dir boost
         }
@@ -92,7 +100,7 @@ runs:
         $link = if ($static) {'static'} else {'shared'}
         $runtime_link = if ($static_runtime) {'static'} else {'shared'}
 
-        $env:PYTHONPATH = Join-Path $env:WORKSPACE cmake
+        $env:PYTHONPATH = Join-Path $workspace cmake
 
         python -m project.boost.download --cache $cache_dir -- $version $boost_dir
         python -m project.boost.build `
