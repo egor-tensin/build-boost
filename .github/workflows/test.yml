@@ -167,7 +167,6 @@ jobs:
           - 1.82.0
           - 1.91.0
         os:
-          - macos-14
           - macos-15
           - macos-26
         include:
